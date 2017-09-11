@@ -6,7 +6,7 @@
 #    By: awyart <awyart@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/28 22:10:59 by awyart            #+#    #+#              #
-#    Updated: 2017/09/08 11:27:38 by awyart           ###   ########.fr        #
+#    Updated: 2017/09/11 13:26:25 by awyart           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,10 @@ FLAGS = -Werror -Wall -Wextra
 
 SRC1 = main.c\
 
+SRC2 = get_option.c\
+
 SRC = $(patsubst %,srcs/%,$(SRC1)) \
+		$(patsubst %,srcs/option/%,$(SRC2)) \
 
 IPATH = includes
 VPATH = srcs

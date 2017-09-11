@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:03:28 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/08 16:20:55 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/11 19:16:36 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,14 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+# define OPTIONS "ltrRa1TS"
 
-
-typedef struct		s_dir
-{
-	struct s_file	*equal;
-	struct s_file	*child;
-	int				filetype;
-	/*et tous le rest*/
-}					t_dir;
 
 typedef struct		s_btree
 {
 	struct s_btree	*left;
 	struct s_btree	*right;
-	void			*item;
+	struct s_stat	*info;
 }					t_btree;
 
 typedef struct 		s_stat
@@ -50,6 +43,10 @@ typedef struct 		s_stat
 	time_t			st_ctime;   /* time of last status change */
 };
 
-int			ft_printf(char *format, ...);
+int					ft_printf(char *format, ...);
+void				ft_get_option(char *str, char flag[128]);
+
+void				btree_insert(t_btree **root, t_stat *stat);
+t_btree				*btree_create_node(t_stat *stat);
 
 #endif
