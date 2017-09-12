@@ -6,27 +6,26 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 13:39:45 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/11 13:48:56 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/12 18:34:43 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-t_btree	*btree_create_node(t_stat *stat)
+t_btree	*btree_create_node(char name[1024])
 {
 	t_btree		*btree;
+	int i;
 
-	if (!(btree = malloc(sizeof(*btree))))
+	i = -1;
+	if (!(btree = malloc(sizeof(t_btree *))))
 	{
 		ft_printf("echec du malloc de l'arbre\n");
-		exit(0);
+		ft_exit();
 	}
-	if (!(btree->info = malloc(sizeof(t_stat *)))
-	{
-		ft_printf("echec du malloc du premier noeud de l'arbre\n");
-		exit(0);
-	}
-	btree->info = stat;
+	while (name[++i] != '\0')
+		btree->name[i] = name[i];
+	btree->name[i] = '\0';
 	btree->right = 0;
 	btree->left = 0;
 	return (btree);

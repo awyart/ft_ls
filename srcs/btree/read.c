@@ -1,32 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   insert.c                                           :+:      :+:    :+:   */
+/*   read.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 13:45:07 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/11 14:42:36 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/12 18:48:42 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-void btree_insert(t_btree **root, t_stat *stat, int (*cmpf)(void *, void *))
+void	btree_apply_infix(t_btree *root, char flag[128], int (*applyf)(char *init, char flag[128]))
 {
-	t_btree *btree;
-
-	btree = *root;
-	if (!(btree))
+	if (!(root))
 	{
-		*root = btree_create_node(stat);
-	}
-	else if ((*cmpf)(item, btree->item) <= 0)
-	{
-		btree_insert_data(&(btree->left), stat, cmpf);
-	}
-	else
-	{
-		btree_insert_data(&(btree->right), stat, cmpf);
+		btree_apply_infix(root->left, flag, (*applyf));
+		(*applyf)(root->name, flag);
+		ft_printf("ssss%s\n", root->name);
+		btree_apply_infix(root->right, flag, (*applyf));
 	}
 }
