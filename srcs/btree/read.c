@@ -1,4 +1,4 @@
-/* ************************************************************************** */
+
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   read.c                                             :+:      :+:    :+:   */
@@ -12,13 +12,26 @@
 
 #include "header.h"
 
-void	btree_apply_infix(t_btree *root, char flag[128], int (*applyf)(char *init, char flag[128]))
+int ft_dont_go(t_btree *btree)
 {
-	if (!(root))
+	if (btree->filetype == 'd')
+		return (0);
+	if (ft_strcmp(btree->name, ".") == 0)
+		return (0);
+	if (ft_strcmp(btree->name, "..") == 0)
+		return (0);
+	return (1);
+}
+
+void	btree_apply_infix(t_btree *root, char flag[128])
+{
+	if (root)
 	{
-		btree_apply_infix(root->left, flag, (*applyf));
-		(*applyf)(root->name, flag);
-		ft_printf("ssss%s\n", root->name);
-		btree_apply_infix(root->right, flag, (*applyf));
+		if (root->left)
+			btree_apply_infix(root->left, flag);
+		if (ft_dont_go(root) == 1)
+			ft_rec_start(root->path_name, flag);
+		if (root->right)
+			btree_apply_infix(root->right, flag);
 	}
 }

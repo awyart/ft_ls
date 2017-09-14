@@ -6,17 +6,40 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:22:29 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/12 18:35:04 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/14 16:26:56 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-/*int		ft_rec_start(char *init, char flag[128])
+int		ft_rec_start(char *init, char flag[128])
 {
-	t_btree *btree;
+	t_btree *btree = NULL;
+	t_btree *new;
 	struct dirent *ret;
-	struct stat info;
+	DIR *dir;
+
+	dir = opendir(init);
+	if (dir == NULL)
+		return (0);
+	ft_printf("\n%s:\n", init);
+	while ((ret = readdir(dir)) > 0)
+	{
+		new = btree_create_node(init, ret->d_name);
+		ft_insert(&btree, new, flag);
+	}
+	ft_draw_tree(btree, flag);
+	btree_apply_infix(btree, flag);
+	//free_arbre();
+	closedir(dir);
+	return (0);
+}
+
+int 	ft_norec_start(char *init, char flag[128])
+{
+	struct dirent *ret;
+	t_btree *btree = NULL;
+	t_btree *new;
 	DIR *dir;
 
 	dir = opendir(init);
@@ -24,92 +47,25 @@
 		return (0);
 	while ((ret = readdir(dir)) > 0)
 	{
-		stat(ret->d_name, &info);
-		if (!(btree))
-			btree = btree_create_node(ret->d_name);
-		else
-			ft_insert(btree, flag, ret->d_name);
+		new = btree_create_node(init, ret->d_name);
+		ft_insert(&btree, new, flag);
 	}
 	ft_draw_tree(btree, flag);
-	btree_apply_infix(btree, flag,  &ft_rec_start);
-	//free_arbre();
+	//freearbre();
+	closedir(dir);
 	return (0);
-}*/
-
-
-void ft_draw_btree(t_btree *btree)
-{
-	ft_printf("%s\n", btree->name);
-	//ft_printf("\tdev   [%d]\n", btree->info->st_mode);
-	//ft_printf("\tmode  [%d]\n", btree->info->st_nlink);
-	//ft_printf("\tnlink [%d]\n", btree->info->st_ino);
-	//ft_printf("\tino   [%d]\n", btree->info->st_uid);
-	//ft_printf("\tuid   [%d]\n", btree->info->st_gid);
-	//ft_printf("\tgid   [%d]\n", btree->info->st_rdev);
-	//ft_printf("\tatime [%d]\n", btree->info->st_atimespec);
-	//ft_printf("\tmtime [%d]\n", btree->info->st_mtimespec);
-	//ft_printf("\tctime [%d]\n", btree->info->st_ctimespec);
-	//ft_printf("\tbtime [%d]\n", btree->info->st_birthtimespec);
-	//ft_printf("\tsize [%d]\n", btree->info->st_size);
-	//ft_printf("\tblock [%d]\n", btree->info->st_blocks);
-	//ft_printf("\tblksize [%d]\n", btree->info->st_blksize);
-	//ft_printf("\tflags [%d]\n", btree->info->st_flags);
-	//ft_printf("\tgen [%d]\n", btree->info->st_gen);
-	//ft_printf("\n");
-}
-
-void ft_printfinfo(struct stat *info)
-{
-	ft_printf("\tdev   [%d]\n", info->st_mode);
-	ft_printf("\tmode  [%d]\n", info->st_nlink);
-	ft_printf("\tnlink [%d]\n", info->st_ino);
-	ft_printf("\tino   [%d]\n", info->st_uid);
-	ft_printf("\tuid   [%d]\n", info->st_gid);
-	ft_printf("\tgid   [%d]\n", info->st_rdev);
-	ft_printf("\tatime [%d]\n", info->st_atimespec);
-	ft_printf("\tmtime [%d]\n", info->st_mtimespec);
-	ft_printf("\tctime [%d]\n", info->st_ctimespec);
-	ft_printf("\tbtime [%d]\n", info->st_birthtimespec);
-	ft_printf("\tsize [%d]\n", info->st_size);
-	ft_printf("\tblock [%d]\n", info->st_blocks);
-	ft_printf("\tblksize [%d]\n", info->st_blksize);
-	ft_printf("\tflags [%d]\n", info->st_flags);
-	ft_printf("\tgen [%d]\n", info->st_gen);
-	ft_printf("\n");
-
 }
 
 int		ft_start(char *init, char flag[128])
 {
-	DIR *dir;
-	struct dirent *ret;
-	t_btree *btree;
-
-	dir = opendir(init);
-	if (dir == NULL)
-		return (0);
-	if (flag['R'] == 0)
-	{
-		while ((ret = readdir(dir)) > 0)
-		{
-			if (!(btree))
-			{
-				btree = btree_create_node(ret->d_name);
-			}
-			else
-			{
-				ft_insert(btree, flag, ret->d_name);
-			}
-		}
-		ft_draw_tree(btree, flag);
-		//freearbre();
-	}
-	/*else
-	{
-		ft_printf("GO RECURSIVE\n");
+	if (flag['d'] > 0)
+		ft_printf("%s\n", init);
+	else if (flag['R'] > 0)
 		ft_rec_start(init, flag);
-	}*/
- 	closedir(dir);
+	else
+	{
+		ft_norec_start(init, flag);
+	}
 	return (0);
 }
 

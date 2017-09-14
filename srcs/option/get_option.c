@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 13:16:22 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/12 14:30:50 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/14 18:04:53 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,11 @@ void 	ft_get_option(char *str, char flag[128])
 		else
 		{
 			flag[(int)str[i]] = 1;
-			ft_printf("le flag %c a ete capture\n", str[i]);
 		}
 		i++;
 	}
 	if (flag['f'] == 1)
-	{
 		flag['a'] = 1;
-		ft_printf("le flag a a ete capture !\n");
-	}
+	if (flag['L'] == 1)
+		flag['P'] = 0;
 }

@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:03:28 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/12 18:57:59 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/14 20:30:40 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,19 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-# define OPTIONS "ltrRa1TS"
+#include <pwd.h>
+#include <sys/types.h>
+#include <uuid/uuid.h>
+# define OPTIONS "ltrudfRa1TS"
 # define _DARWIN_USE_64_BIT_INODE
 
 typedef struct		s_btree
 {
 	struct s_btree	*left;
 	struct s_btree	*right;
-	char			name[1024];
+	char			*name;
+	char 			*path_name;
+	char 			filetype;
 }					t_btree;
 
 //struct stat
@@ -53,31 +58,54 @@ typedef struct		s_btree
 
 //struct dirent 
 //{
-//    ino_t          d_ino;       /* numéro d'inœud */
- //   off_t          d_off;       /* décalage jusqu'à la dirent suivante */
- //   unsigned short d_reclen;    /* longueur de cet enregistrement */
- //   unsigned char  d_type;      /* type du fichier */
-  //  char           d_name[256]; /* nom du fichier */
+//        ino_t      d_fileno;     /* file number of entry */
+//        __uint64_t d_seekoff;    /* seek offset (optional, used by servers) */
+//        __uint16_t d_reclen;     /* length of this record */
+//        __uint16_t d_namlen;     /* length of string in d_name */
+//        __uint8_t  d_type;       /* file type, see below */
+//        char    d_name[1024];    /* name must be no longer than this */
 //};
+
+typedef struct		s_max
+{
+	unsigned int	mlink;
+	unsigned int	muid;
+	unsigned int	mgid;
+	unsigned int	msize;
+	int 			size;
+	unsigned int 	nblink;
+	char 			uid[32];
+	char 			gid[32];
+	char 			right[12];
+	char 			mdhm[12];
+	char 			year[4];
+}					t_max;
 
 int					ft_printf(char *format, ...);
 void				ft_get_option(char *str, char flag[128]);
 
-t_btree				*btree_create_node(char name[1024]);
+t_btree				*btree_create_node(char *dir, char name[1024]);
 void				ft_get_content(struct dirent *ret, struct stat stat);
-void				ft_draw_tree(t_btree *btree, char flag[128]);
-void 				ft_draw_btree(t_btree *btree);
-void				btree_insert_d(t_btree **root, char flag[128], char name[256]);
-void				btree_insert_u(t_btree **root, char flag[128], char name[256]);
+void				ft_draw_tree(t_btree *root, char flag[128], t_max *max);
 void				ft_get_option(char *str, char flag[128]);
 void				ft_usage(char c);
 char				*ft_strchr(char *s, int c);
 int					ft_strlen(char *str);
 void 				ft_exit(void);
 char				*ft_strjoin(char *s1, char *s2);
-void				btree_apply_infix(t_btree *root, char flag[128], int (*applyf)(char *init, char flag[128]));
-void 				ft_insert(t_btree *btree, char flag[128], char name[1024]);
+void				btree_apply_infix(t_btree *root, char flag[128]);
+void 				ft_insert(t_btree **btree, t_btree *new, char flag[128]);
 void				ft_printfinfo(struct stat *info);
 int					ft_strcmp(char *s1, char *s2);
+int					ft_rec_start(char *init, char flag[128]);
+int					ft_dont_go(t_btree *btree);
+
+void 				btree_insert_d(t_btree **root, t_btree *new, char flag[128]);
+void				btree_insert_u(t_btree **root, t_btree *new, char flag[128]);
+void				btree_insert(t_btree **root, t_btree *new, char flag[128]);
+void				btree_insert_t(t_btree **root, t_btree *new, char flag[128]);
+void				btree_insert_um(t_btree **root, t_btree *new, char flag[128]);
+void 				btree_insert_f(t_btree **root, t_btree *new, char flag[128]);
+void 				btree_insert_sm(t_btree **root, t_btree *new, char flag[128]);
 
 #endif
