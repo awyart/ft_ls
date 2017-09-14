@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:03:28 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 20:30:40 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/14 21:31:59 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <uuid/uuid.h>
+#include <grp.h>
 #include <uuid/uuid.h>
 # define OPTIONS "ltrudfRa1TS"
 # define _DARWIN_USE_64_BIT_INODE
@@ -77,7 +79,7 @@ typedef struct		s_max
 	char 			uid[32];
 	char 			gid[32];
 	char 			right[12];
-	char 			mdhm[12];
+	char 			mdhm[13];
 	char 			year[4];
 }					t_max;
 
@@ -107,5 +109,6 @@ void				btree_insert_t(t_btree **root, t_btree *new, char flag[128]);
 void				btree_insert_um(t_btree **root, t_btree *new, char flag[128]);
 void 				btree_insert_f(t_btree **root, t_btree *new, char flag[128]);
 void 				btree_insert_sm(t_btree **root, t_btree *new, char flag[128]);
+char				*ft_strcpy(char *dst, char *src);	
 
 #endif

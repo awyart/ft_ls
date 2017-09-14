@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:22:29 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 16:26:56 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/14 21:26:13 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int		ft_rec_start(char *init, char flag[128])
 	t_btree *new;
 	struct dirent *ret;
 	DIR *dir;
+	t_max max;
 
 	dir = opendir(init);
 	if (dir == NULL)
@@ -28,7 +29,7 @@ int		ft_rec_start(char *init, char flag[128])
 		new = btree_create_node(init, ret->d_name);
 		ft_insert(&btree, new, flag);
 	}
-	ft_draw_tree(btree, flag);
+	ft_draw_tree(btree, flag, &max);
 	btree_apply_infix(btree, flag);
 	//free_arbre();
 	closedir(dir);
@@ -41,6 +42,7 @@ int 	ft_norec_start(char *init, char flag[128])
 	t_btree *btree = NULL;
 	t_btree *new;
 	DIR *dir;
+	t_max max;
 
 	dir = opendir(init);
 	if (dir == NULL)
@@ -50,7 +52,7 @@ int 	ft_norec_start(char *init, char flag[128])
 		new = btree_create_node(init, ret->d_name);
 		ft_insert(&btree, new, flag);
 	}
-	ft_draw_tree(btree, flag);
+	ft_draw_tree(btree, flag, &max);
 	//freearbre();
 	closedir(dir);
 	return (0);

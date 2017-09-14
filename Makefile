@@ -6,7 +6,7 @@
 #    By: awyart <awyart@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/28 22:10:59 by awyart            #+#    #+#              #
-#    Updated: 2017/09/14 14:52:21 by awyart           ###   ########.fr        #
+#    Updated: 2017/09/14 21:20:03 by awyart           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,8 @@ SRC6 = ft_d.c \
 
 SRC7 = ft_strchr.c \
 		ft_strcmp.c  \
-		ft_strjoin.c
+		ft_strjoin.c \
+		ft_strcpy.c \
 
 SRC = $(patsubst %,srcs/%,$(SRC1)) \
 		$(patsubst %,srcs/btree/%,$(SRC2)) \

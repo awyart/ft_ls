@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 15:00:25 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 20:35:11 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/14 21:38:57 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ char ft_getfiletype(mode_t x)
 
 static void 	ft_getright2(mode_t x, char right[12])
 {
-	right[0] = ft_getfiletype(info->st_mode);
 	right[1] = (x & S_IRUSR ? 'r' : '-');
 	right[2] = (x & S_IWUSR ? 'w' : '-');
 	right[3] = (x & S_IXUSR ? 'x' : '-');
@@ -45,7 +44,7 @@ static void 	ft_getright2(mode_t x, char right[12])
 	right[8] = (x & S_IWOTH ? 'w' : '-');
 	right[9] = (x & S_IXOTH ? 'x' : '-');
 	right[10] = ' ';
-	right[11] - '\0';
+	right[11] = '\0';
 }
 
 static void ft_gettime(struct stat info, t_max *max, char flag[128])
@@ -54,17 +53,18 @@ static void ft_gettime(struct stat info, t_max *max, char flag[128])
 	int i;
 
 	if (flag['u'])
-		time = ctime(info.atimespec.tv_sec);
+		time = ctime(&info.st_atimespec.tv_sec);
 	else if (flag['U'])
-		time = ctime(info.birthtimespec.tv_sec);
+		time = ctime(&info.st_birthtimespec.tv_sec);
 	else
-		time = ctime(info.mtimespec.tv_sec);
+		time = ctime(&info.st_mtimespec.tv_sec);
 	i = 0;
 	while (i < 12)
 	{
-		max->mdhm[i] = time[i + 5];
+		max->mdhm[i] = time[i + 4];
 		i++;
 	}
+	max->mdhm[12] = '\0';
 	max->year[0] = time[22];
 	max->year[1] = time[23];
 	max->year[2] = time[24];
@@ -79,11 +79,12 @@ static void 	ft_getright(struct stat info, t_max *max)
 
 	gr = getgrgid(info.st_gid);
 	pass = getpwuid(info.st_uid);
-	time = ctime(info.atimespec->tv_sec);
-	max->uid = pass->pw_name;
-	max->gid = gr->gr_name;
-	max->nblink = (unsigned int)info.stnlink;
+	time = ctime(&info.st_atimespec.tv_sec);
+	ft_strcpy(max->uid, pass->pw_name);
+	ft_strcpy(max->gid, gr->gr_name);
+	max->nblink = (unsigned int)info.st_nlink;
 	max->size = (int)info.st_size;
+	max->right[0] = ft_getfiletype(info.st_mode);
 	ft_getright2(info.st_mode, max->right);
 }
 
@@ -94,11 +95,15 @@ static void ft_draw_l(t_btree *root, char flag[128], t_max *max)
 	stat(root->path_name, &info);
 	ft_getright(info, max);
 	ft_gettime(info, max, flag);
+	max->mlink = 2;
+	max->muid = 6;
+	max->mgid = 10;
+	max->msize = 5;
 	if (max->right[0] == 'c' || max->right[0] == 'b')
 	{
 		ft_printf("%-11s %*u ",max->right, max->mlink, max->nblink);
-		ft_printf("%*s  %*s  ", max->muid, max->uid, max->mgid, max->gid);
-		ft_printf("%3d, " major(info.st_rdev));
+		ft_printf("%*s  %*s ", max->muid, max->uid, max->mgid, max->gid);
+		ft_printf("%3d, ",major(info.st_rdev));
 		ft_printf("%*d %11s %s\n", max->msize, minor(info.st_rdev), max->mdhm, root->name);
 	}
 	else
