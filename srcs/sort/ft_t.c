@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 14:44:50 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 18:00:41 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/15 13:34:58 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void btree_insert_t(t_btree **root, t_btree *new, char flag[128])
 	}
 	else
 	{
-		stat((*root)->path_name, &info2);
-		stat(new->path_name, &info);
+		lstat((*root)->path_name, &info2);
+		lstat(new->path_name, &info);
 		if (info.st_atimespec.tv_sec < info2.st_atimespec.tv_sec)
 		{
 			btree_insert_t(&((*root)->left), new, flag);

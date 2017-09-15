@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 15:00:25 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 21:38:57 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/15 16:38:10 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,35 +14,44 @@
 
 char ft_getfiletype(mode_t x)
 {
-	if (x & S_IFIFO)
-		return ('p'); 
-	if (x & S_IFCHR)
-		return ('c'); 
-	if (x & S_IFDIR)
-		return ('d'); 
-	if (x & S_IFBLK)
-		return ('b'); 
-	if (x & S_IFREG)
+	if (S_ISLNK(x))
+		return ('l');
+	if (S_ISREG(x))
 		return ('-'); 
-	if (x & S_IFLNK)
-		return ('l'); 
-	if (x & S_IFSOCK)
-		return ('s');
+	if (S_ISDIR(x))
+		return ('d'); 
+	if (S_ISCHR(x))
+		return ('c'); 
+	if (S_ISBLK(x))
+		return ('b');
+	if (S_ISFIFO(x))
+		return ('p'); 
+	if (S_ISSOCK(x))
+		return ('-'); 
 	return (0);
 }
 
 
-static void 	ft_getright2(mode_t x, char right[12])
+static void	ft_getright2(mode_t x, char right[12])
 {
 	right[1] = (x & S_IRUSR ? 'r' : '-');
 	right[2] = (x & S_IWUSR ? 'w' : '-');
-	right[3] = (x & S_IXUSR ? 'x' : '-');
+	if (x & S_ISUID)
+		right[3] = (x & S_IXUSR ? 's' : 'S');
+	else
+		right[3] = (x & S_IXUSR ? 'x' : '-');
 	right[4] = (x & S_IRGRP ? 'r' : '-');
 	right[5] = (x & S_IWGRP ? 'w' : '-');
-	right[6] = (x & S_IXGRP ? 'x' : '-');
+	if (x & S_ISGID)
+		right[6] = (x & S_IXUSR ? 's' : 'S');
+	else
+		right[6] = (x & S_IXUSR ? 'x' : '-');
 	right[7] = (x & S_IROTH ? 'r' : '-');
 	right[8] = (x & S_IWOTH ? 'w' : '-');
-	right[9] = (x & S_IXOTH ? 'x' : '-');
+	if (x & S_ISVTX)
+		right[9] = (x & S_IXUSR ? 't' : 'T');
+	else
+		right[9] = (x & S_IXUSR ? 'x' : '-');
 	right[10] = ' ';
 	right[11] = '\0';
 }
@@ -77,28 +86,37 @@ static void 	ft_getright(struct stat info, t_max *max)
 	char *time;
 	struct group *gr;
 
-	gr = getgrgid(info.st_gid);
-	pass = getpwuid(info.st_uid);
+	if (!(gr = getgrgid(info.st_gid)))
+		ft_itoa((long long)info.st_gid, max->gid);
+	else
+		ft_strcpy(max->gid, gr->gr_name);
+	if (!(pass = getpwuid(info.st_uid)))
+		ft_itoa((long long)info.st_uid, max->uid);
+	else
+		ft_strcpy(max->uid, pass->pw_name);
 	time = ctime(&info.st_atimespec.tv_sec);
-	ft_strcpy(max->uid, pass->pw_name);
-	ft_strcpy(max->gid, gr->gr_name);
 	max->nblink = (unsigned int)info.st_nlink;
 	max->size = (int)info.st_size;
 	max->right[0] = ft_getfiletype(info.st_mode);
 	ft_getright2(info.st_mode, max->right);
 }
 
-static void ft_draw_l(t_btree *root, char flag[128], t_max *max)
+static int ft_draw_l(t_btree *root, char flag[128], t_max *max)
 {
 	struct stat info;
 
-	stat(root->path_name, &info);
+	if (flag['L'])
+	{
+		if (stat(root->path_name, &info) == -1)
+			return (0);
+	}
+	else
+	{
+		if (lstat(root->path_name, &info) == -1)
+			return (0);
+	}
 	ft_getright(info, max);
 	ft_gettime(info, max, flag);
-	max->mlink = 2;
-	max->muid = 6;
-	max->mgid = 10;
-	max->msize = 5;
 	if (max->right[0] == 'c' || max->right[0] == 'b')
 	{
 		ft_printf("%-11s %*u ",max->right, max->mlink, max->nblink);
@@ -110,8 +128,16 @@ static void ft_draw_l(t_btree *root, char flag[128], t_max *max)
 	{
 		ft_printf("%-11s %*u ",max->right, max->mlink, max->nblink);
 		ft_printf("%*s  %*s  ", max->muid, max->uid, max->mgid, max->gid);
-		ft_printf("%*d %11s %s\n", max->msize, max->size, max->mdhm, root->name);
+		ft_printf("%*d %11s %s", max->msize, max->size, max->mdhm, root->name);
+		if (max->right[0] == 'l' && !flag['L'])
+		{
+			readlink(root->path_name, max->link, 64);
+			ft_printf(" -> %s\n", max->link);
+		}
+		else
+			ft_printf("\n");
 	}
+	return (1);
 }
 
 void	ft_draw_tree(t_btree *root, char flag[128], t_max *max)

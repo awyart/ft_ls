@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:03:28 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 21:31:59 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/15 17:02:10 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 # define HEADER_H
 
 #include <dirent.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pwd.h>
@@ -24,7 +26,8 @@
 #include <uuid/uuid.h>
 #include <grp.h>
 #include <uuid/uuid.h>
-# define OPTIONS "ltrudfRa1TS"
+#include <errno.h> 
+# define OPTIONS "lLtruUdfRa1TS"
 # define _DARWIN_USE_64_BIT_INODE
 
 typedef struct		s_btree
@@ -33,7 +36,6 @@ typedef struct		s_btree
 	struct s_btree	*right;
 	char			*name;
 	char 			*path_name;
-	char 			filetype;
 }					t_btree;
 
 //struct stat
@@ -50,10 +52,10 @@ typedef struct		s_btree
 //    struct timespec st_ctimespec;     /* time of last status change */
 //    struct timespec st_birthtimespec; /* time of file creation(birth) */
 //    off_t           st_size;          /* file size, in bytes */
-//    blkcnt_t        st_blocks;        /* blocks allocated for file */
+//    blkcnt_t        st_blocks;        /* user defined flags for file */
+//    uint32_t        st_gen;           /* file generation number       /* blocks allocated for file */
 //    blksize_t       st_blksize;       /* optimal blocksize for I/O */
-//    uint32_t        st_flags;         /* user defined flags for file */
-//    uint32_t        st_gen;           /* file generation number */
+//    uint32_t        st_flags;   */
 //    int32_t         st_lspare;        /* RESERVED: DO NOT USE! */
 //    int64_t         st_qspare[2];     /* RESERVED: DO NOT USE! */
 //};
@@ -68,6 +70,13 @@ typedef struct		s_btree
 //        char    d_name[1024];    /* name must be no longer than this */
 //};
 
+//struct group {
+//        char    *gr_name;       /* group name */
+//        char    *gr_passwd;     /* group password */
+//        gid_t   gr_gid;         /* group id */
+//        char    **gr_mem;       /* group members */
+//};
+
 typedef struct		s_max
 {
 	unsigned int	mlink;
@@ -76,11 +85,13 @@ typedef struct		s_max
 	unsigned int	msize;
 	int 			size;
 	unsigned int 	nblink;
-	char 			uid[32];
-	char 			gid[32];
+	char 			uid[1024];
+	char 			gid[1024];
+	char 			link[1024];
 	char 			right[12];
 	char 			mdhm[13];
 	char 			year[4];
+	unsigned int 	nbblock;
 }					t_max;
 
 int					ft_printf(char *format, ...);
@@ -95,20 +106,25 @@ char				*ft_strchr(char *s, int c);
 int					ft_strlen(char *str);
 void 				ft_exit(void);
 char				*ft_strjoin(char *s1, char *s2);
-void				btree_apply_infix(t_btree *root, char flag[128]);
+void				btree_apply_infix(t_btree *root, char flag[128], t_max *max);
 void 				ft_insert(t_btree **btree, t_btree *new, char flag[128]);
 void				ft_printfinfo(struct stat *info);
 int					ft_strcmp(char *s1, char *s2);
 int					ft_rec_start(char *init, char flag[128]);
-int					ft_dont_go(t_btree *btree);
+int					ft_dont_go(t_btree *btree, t_max *max);
 
 void 				btree_insert_d(t_btree **root, t_btree *new, char flag[128]);
 void				btree_insert_u(t_btree **root, t_btree *new, char flag[128]);
 void				btree_insert(t_btree **root, t_btree *new, char flag[128]);
 void				btree_insert_t(t_btree **root, t_btree *new, char flag[128]);
 void				btree_insert_um(t_btree **root, t_btree *new, char flag[128]);
-void 				btree_insert_f(t_btree **root, t_btree *new, char flag[128]);
-void 				btree_insert_sm(t_btree **root, t_btree *new, char flag[128]);
-char				*ft_strcpy(char *dst, char *src);	
+void				btree_insert_f(t_btree **root, t_btree *new, char flag[128]);
+void				btree_insert_sm(t_btree **root, t_btree *new, char flag[128]);
+char				*ft_strcpy(char *dst, char *src);
+void				ft_testmax(t_max *max,t_btree *new);
+void				ft_init_max(t_max *max);
+
+void				ft_itoa(long long value, char str[1024]);
+
 
 #endif

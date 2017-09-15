@@ -6,7 +6,7 @@
 #    By: awyart <awyart@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/28 22:10:59 by awyart            #+#    #+#              #
-#    Updated: 2017/09/14 21:20:03 by awyart           ###   ########.fr        #
+#    Updated: 2017/09/15 11:48:44 by awyart           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ SRC2 = create.c \
 		read.c
 
 SRC3 = get_content.c \
-		exit.c
+		exit.c \
+		max.c
 
 SRC4 = draw.c \
 

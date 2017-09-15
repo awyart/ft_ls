@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 14:35:27 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/14 17:38:34 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/15 16:02:10 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void btree_insert(t_btree **root, t_btree *new, char flag[128])
 {
-
 	if (!(*root))
 	{
 		*root = new;
