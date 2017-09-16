@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/15 11:43:03 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/15 16:10:21 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/16 14:11:27 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ void				ft_init_max(t_max *max)
 	int i;
 
 	i = -1;
-	max->mlink = 2;
-	max->muid = 5;
-	max->mgid = 10;
-	max->msize = 5;
+	max->mlink = 0;
+	max->muid = 0;
+	max->mgid = 0;
+	max->msize = 0;
 	max->nbblock = 0;
 	while (++i < 1024)
 		max->uid[i] = '\0';
@@ -51,6 +51,7 @@ void				ft_init_max(t_max *max)
 	while (++i < 1024)
 		max->link[i] = '\0';
 }
+
 
 void				ft_testmax(t_max *max,t_btree *new)
 {

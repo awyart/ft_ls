@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:22:29 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/15 17:03:38 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/16 14:19:15 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int		ft_rec_start(char *init, char flag[128])
 	ft_init_max(&max);
 	if (dir == NULL)
 	{
-		ft_printf("./ft_ls: %s: %s\n", strerror(errno));
+		ft_printf("./ft_ls: %s\n\n", strerror(errno));
 		return (0);
 	}
 	while ((ret = readdir(dir)) > 0)
@@ -54,7 +54,7 @@ int		ft_rec_start(char *init, char flag[128])
 	if (flag['l'])
 		ft_printf("total %u\n", max.nbblock);
 	ft_draw_tree(btree, flag, &max);
-	btree_apply_infix(btree, flag, &max);
+	btree_apply_infix(btree, flag);
 	ft_free_tree(btree);
 	closedir(dir);
 	return (0);
@@ -73,7 +73,7 @@ int 	ft_norec_start(char *init, char flag[128])
 	ft_init_max(&max);
 	if (dir == NULL)
 	{
-		ft_printf("./ft_ls: %s: %s\n", strerror(errno));
+		ft_printf("./ft_ls: %s\n\n", strerror(errno));
 		return (0);
 	}
 	while ((ret = readdir(dir)) > 0)
@@ -110,9 +110,13 @@ static void ft_start_tree(t_btree *btree,char flag[128])
 		ft_printf("%s:\n", btree->name);
 		ft_start(btree->name, flag);
 		if (btree->right)
+		{
+			ft_printf("\n");
 			ft_start_tree(btree->right, flag);
+		}
 	}
 }
+
 
 int		main(int ac, char **av)
 {
@@ -121,9 +125,11 @@ int		main(int ac, char **av)
 	int a;
 	t_btree *btree = NULL;
 	t_btree *new;
+	t_max max;
 
 	i = -1;
 	a = 0;
+	errno = 0;
 	while (++i < 128)
 		flag[i] = 0;
 	i = 1;
@@ -134,8 +140,18 @@ int		main(int ac, char **av)
 		else
 		{
 			a = 1;
-			new = btree_create_node(av[i], ".");
-			ft_insert(&btree, new, flag);
+			if (opendir(av[i]) != NULL || errno != ENOTDIR)
+			{
+				new = btree_create_node(".", av[i]);
+				ft_insert(&btree, new, flag);
+			}
+			else
+			{
+				new = ft_create_spe(av[i]);
+				ft_testmax(&max, new);
+				ft_draw_tree(new, flag, &max);
+				ft_printf("\n");
+			}	
 		}
 		i++;
 	}

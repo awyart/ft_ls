@@ -12,26 +12,26 @@
 
 #include "header.h"
 
-int ft_dont_go(t_btree *btree, t_max *max)
+int ft_dont_go(t_btree *btree, char flag[128])
 {
-	if (max->right[0] != 'd')
-		return (0);
 	if (ft_strcmp(btree->name, ".") == 0)
 		return (0);
 	if (ft_strcmp(btree->name, "..") == 0)
 		return (0);
+	if (flag['a'] == 0 && btree->name[0] == '.')
+		return (0);
 	return (1);
 }
 
-void	btree_apply_infix(t_btree *root, char flag[128], t_max *max)
+void	btree_apply_infix(t_btree *root, char flag[128])
 {
 	if (root)
 	{
 		if (root->left)
-			btree_apply_infix(root->left, flag, max);
-		if (ft_dont_go(root, max) == 1)
+			btree_apply_infix(root->left, flag);
+		if (ft_dont_go(root, flag) == 1 && root->filetype == 'd')
 			ft_rec_start(root->path_name, flag);
 		if (root->right)
-			btree_apply_infix(root->right, flag, max);
+			btree_apply_infix(root->right, flag);
 	}
 }

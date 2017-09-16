@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 15:00:25 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/15 16:38:10 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/16 14:12:54 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char ft_getfiletype(mode_t x)
 	if (S_ISFIFO(x))
 		return ('p'); 
 	if (S_ISSOCK(x))
-		return ('-'); 
+		return ('s'); 
 	return (0);
 }
 
@@ -52,8 +52,7 @@ static void	ft_getright2(mode_t x, char right[12])
 		right[9] = (x & S_IXUSR ? 't' : 'T');
 	else
 		right[9] = (x & S_IXUSR ? 'x' : '-');
-	right[10] = ' ';
-	right[11] = '\0';
+	right[10] = '\0';
 }
 
 static void ft_gettime(struct stat info, t_max *max, char flag[128])
@@ -101,7 +100,64 @@ static void 	ft_getright(struct stat info, t_max *max)
 	ft_getright2(info.st_mode, max->right);
 }
 
-static int ft_draw_l(t_btree *root, char flag[128], t_max *max)
+static void ft_printcolor(t_max *max)
+{
+	if (max->right[0] == 'c')
+		ft_printf("\033[34;43m");
+	else if (max->right[0] == 'b')
+		ft_printf("\033[32;47m");
+	else if (max->right[0] == 'd')
+		ft_printf("\033[33m");
+	else if (max->right[0] == 'l')
+		ft_printf("\033[34m");
+	else if (max->right[0] == 'p')
+		ft_printf("\033[35m");
+	else
+		ft_printf("\033[36m");
+}
+
+static void ft_print_dirli(t_max *max, t_btree *root, char flag[128], struct stat info)
+{
+	ft_printf("%-10s  %*u ",max->right, max->mlink, max->nblink);
+	ft_printf("%-*s  %-*s  ", max->muid, max->uid, max->mgid, max->gid);
+	ft_printf("%3d,",major(info.st_rdev));
+	ft_printf("%*d %11s ", max->msize, minor(info.st_rdev), max->mdhm);
+	if (flag['G'])
+	{
+		ft_printcolor(max);
+		ft_printf("%s\033[00m\n", root->name);
+	}
+	else
+		ft_printf("%s\n", root->name);
+}
+
+static void ft_print_oth(t_max *max, t_btree *root, char flag[128])
+{
+	int i;
+
+	i = -1;
+	ft_printf("%-10s  %*u ",max->right, max->mlink, max->nblink);
+	ft_printf("%-*s  %-*s  ", max->muid, max->uid, max->mgid, max->gid);
+	ft_printf("%*d %11s ", max->msize, max->size, max->mdhm);
+	if (flag['G'])
+	{
+		ft_printcolor(max);
+		ft_printf("%s\033[00m", root->name);
+	}
+	else
+		ft_printf("%s", root->name);
+	if (max->right[0] == 'l' && !flag['L'])
+	{
+		readlink(root->path_name, max->link, 64);
+		ft_printf(" -> %s\n", max->link);
+		while (++i < 1024)
+			max->link[i] = '\0';
+	}
+	else
+		ft_printf("\n");
+}
+
+int ft_draw_l(t_btree *root, char flag[128], t_max *max)
 {
 	struct stat info;
 
@@ -118,25 +174,9 @@ static int ft_draw_l(t_btree *root, char flag[128], t_max *max)
 	ft_getright(info, max);
 	ft_gettime(info, max, flag);
 	if (max->right[0] == 'c' || max->right[0] == 'b')
-	{
-		ft_printf("%-11s %*u ",max->right, max->mlink, max->nblink);
-		ft_printf("%*s  %*s ", max->muid, max->uid, max->mgid, max->gid);
-		ft_printf("%3d, ",major(info.st_rdev));
-		ft_printf("%*d %11s %s\n", max->msize, minor(info.st_rdev), max->mdhm, root->name);
-	}
+		ft_print_dirli(max, root, flag, info);
 	else
-	{
-		ft_printf("%-11s %*u ",max->right, max->mlink, max->nblink);
-		ft_printf("%*s  %*s  ", max->muid, max->uid, max->mgid, max->gid);
-		ft_printf("%*d %11s %s", max->msize, max->size, max->mdhm, root->name);
-		if (max->right[0] == 'l' && !flag['L'])
-		{
-			readlink(root->path_name, max->link, 64);
-			ft_printf(" -> %s\n", max->link);
-		}
-		else
-			ft_printf("\n");
-	}
+		ft_print_oth(max, root, flag);
 	return (1);
 }
 
