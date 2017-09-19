@@ -6,14 +6,13 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/12 14:54:03 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/15 15:09:38 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/19 11:59:44 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-void ft_exit(void)
+void	ft_exit(void)
 {
 	exit(0);
 }
-

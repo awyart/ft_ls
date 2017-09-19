@@ -6,31 +6,11 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/11 15:00:25 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/16 14:12:54 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/19 15:07:45 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
-
-char ft_getfiletype(mode_t x)
-{
-	if (S_ISLNK(x))
-		return ('l');
-	if (S_ISREG(x))
-		return ('-'); 
-	if (S_ISDIR(x))
-		return ('d'); 
-	if (S_ISCHR(x))
-		return ('c'); 
-	if (S_ISBLK(x))
-		return ('b');
-	if (S_ISFIFO(x))
-		return ('p'); 
-	if (S_ISSOCK(x))
-		return ('s'); 
-	return (0);
-}
-
 
 static void	ft_getright2(mode_t x, char right[12])
 {
@@ -55,10 +35,10 @@ static void	ft_getright2(mode_t x, char right[12])
 	right[10] = '\0';
 }
 
-static void ft_gettime(struct stat info, t_max *max, char flag[128])
+static void	ft_gettime(struct stat info, t_max *max, char flag[128])
 {
-	char *time;
-	int i;
+	char	*time;
+	int		i;
 
 	if (flag['u'])
 		time = ctime(&info.st_atimespec.tv_sec);
@@ -79,11 +59,11 @@ static void ft_gettime(struct stat info, t_max *max, char flag[128])
 	max->year[3] = time[25];
 }
 
-static void 	ft_getright(struct stat info, t_max *max)
+static void	ft_getright(struct stat info, t_max *max)
 {
-	struct passwd *pass;
-	char *time;
-	struct group *gr;
+	struct passwd	*pass;
+	char			*time;
+	struct group	*gr;
 
 	if (!(gr = getgrgid(info.st_gid)))
 		ft_itoa((long long)info.st_gid, max->gid);
@@ -100,64 +80,23 @@ static void 	ft_getright(struct stat info, t_max *max)
 	ft_getright2(info.st_mode, max->right);
 }
 
-static void ft_printcolor(t_max *max)
+static void	ft_print_dirli(t_max *max, t_btree *root,
+					char flag[128], struct stat info)
 {
-	if (max->right[0] == 'c')
-		ft_printf("\033[34;43m");
-	else if (max->right[0] == 'b')
-		ft_printf("\033[32;47m");
-	else if (max->right[0] == 'd')
-		ft_printf("\033[33m");
-	else if (max->right[0] == 'l')
-		ft_printf("\033[34m");
-	else if (max->right[0] == 'p')
-		ft_printf("\033[35m");
-	else
-		ft_printf("\033[36m");
-}
-
-static void ft_print_dirli(t_max *max, t_btree *root, char flag[128], struct stat info)
-{
-	ft_printf("%-10s  %*u ",max->right, max->mlink, max->nblink);
-	ft_printf("%-*s  %-*s  ", max->muid, max->uid, max->mgid, max->gid);
-	ft_printf("%3d,",major(info.st_rdev));
-	ft_printf("%*d %11s ", max->msize, minor(info.st_rdev), max->mdhm);
+	PRINTF("%-10s  %*u ", max->right, max->mlink, max->nblink);
+	PRINTF("%-*s  %-*s  ", max->muid, max->uid, max->mgid, max->gid);
+	PRINTF("%3d,", major(info.st_rdev));
+	PRINTF("%*d %11s ", max->msize, minor(info.st_rdev), max->mdhm);
 	if (flag['G'])
 	{
 		ft_printcolor(max);
-		ft_printf("%s\033[00m\n", root->name);
+		PRINTF("%s\033[00m\n", root->name);
 	}
 	else
-		ft_printf("%s\n", root->name);
+		PRINTF("%s\n", root->name);
 }
 
-static void ft_print_oth(t_max *max, t_btree *root, char flag[128])
-{
-	int i;
-
-	i = -1;
-	ft_printf("%-10s  %*u ",max->right, max->mlink, max->nblink);
-	ft_printf("%-*s  %-*s  ", max->muid, max->uid, max->mgid, max->gid);
-	ft_printf("%*d %11s ", max->msize, max->size, max->mdhm);
-	if (flag['G'])
-	{
-		ft_printcolor(max);
-		ft_printf("%s\033[00m", root->name);
-	}
-	else
-		ft_printf("%s", root->name);
-	if (max->right[0] == 'l' && !flag['L'])
-	{
-		readlink(root->path_name, max->link, 64);
-		ft_printf(" -> %s\n", max->link);
-		while (++i < 1024)
-			max->link[i] = '\0';
-	}
-	else
-		ft_printf("\n");
-}
-
-int ft_draw_l(t_btree *root, char flag[128], t_max *max)
+int			ft_draw_l(t_btree *root, char flag[128], t_max *max)
 {
 	struct stat info;
 
@@ -178,25 +117,4 @@ int ft_draw_l(t_btree *root, char flag[128], t_max *max)
 	else
 		ft_print_oth(max, root, flag);
 	return (1);
-}
-
-void	ft_draw_tree(t_btree *root, char flag[128], t_max *max)
-{
-	if ((root))
-	{
-		if ((root)->left)
-			ft_draw_tree(((root)->left), flag, max);
-		if (flag['l'] == 0)
-		{
-			if (!(flag['a'] == 0 && root->name[0] == '.'))
-				ft_printf("%s\n", (root)->name);
-		}
-		else
-		{
-			if (!(flag['a'] == 0 && root->name[0] == '.'))
-				ft_draw_l(root, flag, max);
-		}
-		if ((root)->right)	
-			ft_draw_tree(((root)->right), flag, max);
-	}
 }

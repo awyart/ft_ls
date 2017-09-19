@@ -6,7 +6,7 @@
 #    By: awyart <awyart@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/04/28 22:10:59 by awyart            #+#    #+#              #
-#    Updated: 2017/09/15 11:48:44 by awyart           ###   ########.fr        #
+#    Updated: 2017/09/19 13:26:25 by awyart           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,13 +17,15 @@ FLAGS = -Werror -Wall -Wextra
 SRC1 = main.c\
 
 SRC2 = create.c \
-		read.c
+		read.c \
+		norec.c
 
 SRC3 = get_content.c \
 		exit.c \
 		max.c
 
 SRC4 = draw.c \
+		draw2.c \
 
 SRC5 = get_option.c 
 
@@ -58,7 +60,7 @@ pf :
 	@cd ./srcs/ft_printf/ && $(MAKE) 
 
 $(NAME) : pf 
-	@$(CC) $(FLAGS) -o $(NAME) $(SRC) $(LIB) -I $(IPATH) -g
+	@$(CC) $(FLAGS) -o $(NAME) $(SRC) $(LIB) -I $(IPATH)
 
 clean :
 	@rm -f $(OBJ)

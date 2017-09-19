@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/08 11:03:28 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/16 14:23:22 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/19 15:16:22 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@
 # include <grp.h>
 # include <uuid/uuid.h>
 # include <errno.h>
-# define OPTIONS "GlLtruUdfRa1TS"
+# define PRINTF ft_printf
+# define OPTIONS "GlLtruUPpdfRa1S"
 # define _DARWIN_USE_64_BIT_INODE
 
 typedef struct		s_btree
@@ -56,8 +57,10 @@ typedef struct		s_max
 }					t_max;
 
 int					ft_printf(char *format, ...);
+int					ft_norec_start(char *init, char flag[128]);
+int					ft_start(char *init, char flag[128]);
 void				ft_get_option(char *str, char flag[128]);
-t_btree				*btree_create_node(char *dir, char name[1024]);
+t_btree				*btree_create_node(char *dir, char name[1024], int a);
 void				ft_get_content(struct dirent *ret, struct stat stat);
 void				ft_draw_tree(t_btree *root, char flag[128], t_max *max);
 void				ft_get_option(char *str, char flag[128]);
@@ -93,5 +96,9 @@ void				ft_init_max(t_max *max);
 void				ft_itoa(long long value, char str[1024]);
 t_btree				*ft_create_spe(char *init);
 int					ft_draw_l(t_btree *root, char flag[128], t_max *max);
+void				ft_printcolor(t_max *max);
+void				ft_print_oth(t_max *max, t_btree *root, char flag[128]);
+void				ft_free_tree(t_btree *btree);
+void				ft_start_tree(t_btree *btree, char flag[128]);
 
 #endif

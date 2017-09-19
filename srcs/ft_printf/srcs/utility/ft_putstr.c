@@ -6,7 +6,7 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/12 20:53:49 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/08 10:57:29 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/19 12:06:59 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,3 @@ void			ft_putstr(char const *str)
 	if (!(str == NULL))
 		write(1, str, ft_stlen(str));
 }
-
-

@@ -6,13 +6,13 @@
 /*   By: awyart <awyart@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/15 11:43:03 by awyart            #+#    #+#             */
-/*   Updated: 2017/09/16 14:11:27 by awyart           ###   ########.fr       */
+/*   Updated: 2017/09/19 12:00:51 by awyart           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.h"
 
-static unsigned int ft_size(unsigned int a)
+static unsigned int	ft_size(unsigned int a)
 {
 	int i;
 
@@ -20,7 +20,6 @@ static unsigned int ft_size(unsigned int a)
 	while ((a /= 10) != 0)
 		i++;
 	return (i + 1);
-
 }
 
 void				ft_init_max(t_max *max)
@@ -52,14 +51,13 @@ void				ft_init_max(t_max *max)
 		max->link[i] = '\0';
 }
 
-
-void				ft_testmax(t_max *max,t_btree *new)
+void				ft_testmax(t_max *max, t_btree *new)
 {
 	struct stat		info;
 	unsigned int	sizename;
 	unsigned int	sizegroup;
-	struct passwd 	*pass;
-	struct group 	*gr;
+	struct passwd	*pass;
+	struct group	*gr;
 
 	sizename = 0;
 	sizegroup = 0;
